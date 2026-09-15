@@ -6,12 +6,10 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
-
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -32,17 +30,15 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker Image
-        run: |
-          docker build             -t rahmanuddinmd17/java-docker-app:latest .
+        run: docker build -t rahmanuddinmd17/java-docker-app:latest .
+
+      - name: Verify Docker Image
+        run: docker images
 
       - name: Push Docker Image
-        run: |
-          docker push             rahmanuddinmd17/java-docker-app:latest
+        run: docker push rahmanuddinmd17/java-docker-app:latest
 
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: 
+      - name: Verify Push
+        run: |
+          echo "Docker image pushed successfully"
+          echo "Image: rahmanuddinmd17/java-docker-app:latest"
